@@ -20,10 +20,10 @@ let scientificPapers = [
     },
     //Default
     {
-        name: 'Missing',
+        name: null,
         id: 0,
-        abstract: 'Missing',
-        link: 'Missing',
+        abstract: null,
+        link: null,
         subject: [],
         publishicationDate: null,
     },
@@ -36,6 +36,31 @@ app.get('/', (request, response) => {
 
 app.get('/api/scientificPapers', (request, response) => {
     response.send(scientificPapers);
+})
+
+function getListOfAllSubjects() {
+    //Returns list alphabetically and with the first letter capitalized to display nicer to the user.
+    const listOfTopics = [];
+    scientificPapers.forEach(paper => paper.subject.forEach(topic => {
+        if (listOfTopics.includes(topic) === false) {
+            //To do capitalize topic first letter and lowercase the rest.
+            listOfTopics.push(topic);
+        }
+
+    }))
+    return listOfTopics.sort();
+}
+
+app.get('/info', (request, response) => {
+    //Filtered papers with null names.
+    const nonNullPapers = scientificPapers.filter(paper => paper.name);
+    const numOfPapers = nonNullPapers.length;
+
+    const availableTopics = getListOfAllSubjects();
+
+    response.write(`<p> Scientific Papers has info for ${numOfPapers} papers. </p>`);
+    response.write(`<p> Topics you can search with: ${availableTopics.join(', ')}<p/>`)
+    response.send();
 })
 
 app.get('/api/scientificPapers/:topic', (request, response) => {
