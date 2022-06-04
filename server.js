@@ -108,6 +108,6 @@ app.delete('/api/scientificPapers/:id', (request, response) => {
 })*/
 
 
-app.listen(PORT, () => {
+app.listen(process.env.PORT || PORT, () => {
     console.log(`Server running on ${PORT}`)
 })
