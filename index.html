@@ -4,10 +4,14 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./css/bootstrap.min.css">
     <title>Got a Source for That?</title>
 </head>
 <body>
-    <h1>"We live in a society exquisitely dependent on science and technology, in which hardly anyone knows anything about science and technology. The science of today is the technology of tomorrow." - Carl Sagan</h1>
-    
+    <h1 class="shadow p-3 mb-5 bg-white rounded">"We live in a society exquisitely dependent on science and technology, in which hardly anyone knows anything about science and technology. The science of today is the technology of tomorrow." - Carl Sagan</h1>
+    <form action="/addPapers" method="POST">
+        <input type="text" placeholder="link" name="link" />
+        <button type="submit">Submit</button>
+    </form>
 </body>
 </html>

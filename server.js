@@ -1,10 +1,71 @@
 const express = require('express');
 const req = require('express/lib/request');
 const app = express();
+const path = require('path');
+require('dotenv').config();
+const mongoose = require('mongoose');
+const Papers = require('./models/scientificPapers');
 
 const PORT = process.env.PORT || 3000;
+const ipPORT = process.env.ip_PORT;
+const dbName = 'scientific-papers';
+const url = `mongodb://${ipPORT}${dbName}`;
+
+mongoose.connect(url, { useNewUrlParser: true });
+const db = mongoose.connection;
+
+
+
+db.once('open', _ => {
+    console.log('Database connected:', url);
+})
+
+db.on('error', err => {
+    console.error('connection error:', err);
+})
 
 app.use(express.json());
+app.use(express.static('public'));
+app.use('/css', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/css')));
+app.use('/js', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/js')));
+
+async function savePaper() {
+    //Mongoose?
+    const template = new Papers({
+        title: 'Sample',
+        abstract: 'Sample Abstract',
+        link: 'Sample Link',
+    });
+    const lgbtqPaper = new Papers({
+        title: 'A Decade of Microaggression Research and LGBTQ Communities: An Introduction to the Special Issue',
+        abstract: 'Though the Supreme Court of the U.S. legalized same-sex marriage in 2015, heterosexism and transphobia has continued to manifest through many systems in the US — from lack of federal protection in employment non-discrimination laws to polices that prohibit transgender people from using bathroom and public facilities that match their gender identities. Heterosexist and transphobic discrimination have also persisted through interpersonal interactions — ranging from more overt forms (e.g., hate crimes, bullying) to more subtle forms of discrimination, otherwise known as microaggressions. Since 2008, there have been hundreds of articles written on microaggressions, with dozens focusing specifically on experiences of lesbian, gay, bisexual, transgender, and queer (LGBTQ) people. Qualitative and quantitative studies have revealed that LGBTQ people who experience microaggressions have reported negative outcomes like depression, low self-esteem, and trauma. This special issue aims to further Microaggression Theory by providing theoretical and empirical papers that focus on the manifestation and impact of microaggressions on LGBTQ people. Using an interdisciplinary approach, articles range in topic from intersectional identities, to health and psychological outcomes, to advancing research methods. Future studies regarding microaggressions and LGBTQ people are discussed- highlighting the influence of the changing landscape of heterosexism and transphobia within general society, as well as new dynamics that have formed and developed within LGBTQ communities.',
+        link: 'https://www.tandfonline.com/doi/abs/10.1080/00918369.2018.1539582'
+    })
+
+    // await template.save();
+    // await lgbtqPaper.save();
+
+    //  const paper = await Papers.findOne({ link: 'https://www.tandfonline.com/doi/abs/10.1080/00918369.2018.1539582' })
+
+    // paper.subject = ['Microaggressions', 'LGBTQ', 'discrimination', 'heterosexism', 'transphobia'];
+    // const doc = await paper.save()
+
+
+    // const deleted = await template.remove(); //find
+    const papers = await Papers.find();
+    console.log(papers);
+}
+
+savePaper()
+    .catch(error => { console.error(error) });
+
+
+
+
+
+
+
+
 
 let scientificPapers = [
     //Subject must be [], with the array accepting strings or else it'll break functionality in the app.get request below.
@@ -49,7 +110,6 @@ let scientificPapers = [
         author: null,
     },
 ]
-
 
 app.get('/', (request, response) => {
     response.sendFile(__dirname + '/index.html');
@@ -98,14 +158,6 @@ app.get('/api/scientificPapers/:topic', (request, response) => {
     }
 })
 
-/*
-app.delete('/api/scientificPapers/:id', (request, response) => {
-    //Delete based on ID
-    const id = Number(request.params.id);
-    scientificPapers = scientificPapers.filter(paper => paper.id !== id);
-
-    response.status(204).end();
-})*/
 
 
 app.listen(process.env.PORT || PORT, () => {
